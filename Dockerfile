@@ -18,6 +18,7 @@ RUN apt-get update && apt-get install -y \
 
 # Copiar el código fuente de la aplicación al contenedor
 COPY converter/ /var/www/html
+COPY php.ini /usr/local/etc/php/conf.d/custom-php.ini
 
 # Configurar Apache (opcional, según tus necesidades)
 # COPY ./apache.conf /etc/apache2/sites-available/000-default.conf

@@ -110,7 +110,7 @@ function convertImage($sourcePath, $toFormat, $destinationPath) {
 
         $response['success'] = true;
         $response['message'] = 'Imagen convertida con éxito.';
-        $response['filePath'] = $destinationPath;
+        sendFile($destinationPath, $toFormat);
 
     } catch (Exception $e) {
         $response['message'] = 'Error al convertir la imagen: ' . $e->getMessage();
@@ -155,7 +155,7 @@ function convertDocument($sourcePath, $toFormat, $destinationPath) {
 
         $response['success'] = true;
         $response['message'] = 'Documento convertido con éxito.';
-        $response['filePath'] = $destinationPath;
+        sendFile($destinationPath, $toFormat);
     } else {
         $response['message'] = 'Error al convertir el documento.';
     }
@@ -192,7 +192,7 @@ function convertAudio($sourcePath, $toFormat, $destinationPath) {
     if (file_exists($destinationPath)) {
         $response['success'] = true;
         $response['message'] = 'Audio convertido con éxito.';
-        $response['filePath'] = $destinationPath;
+        sendFile($destinationPath, $toFormat);
     } else {
         $response['message'] = 'Error al convertir el audio.';
     }
@@ -229,9 +229,26 @@ function convertVideo($sourcePath, $toFormat, $destinationPath) {
     if (file_exists($destinationPath)) {
         $response['success'] = true;
         $response['message'] = 'Video convertido con éxito.';
-        $response['filePath'] = $destinationPath;
+        sendFile($destinationPath, $toFormat);
     } else {
         $response['message'] = 'Error al convertir el video.';
+    }
+}
+
+function sendFile($filePath, $format) {
+    // Asegurarse de que el archivo existe
+    if (file_exists($filePath)) {
+        // Establecer los encabezados para la descarga
+        header('Content-Description: File Transfer');
+        header('Content-Type: application/octet-stream');
+        header('Content-Disposition: attachment; filename="'. basename($filePath) .'"');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate');
+        header('Pragma: public');
+        header('Content-Length: ' . filesize($filePath));
+        flush(); // Vaciar buffers del sistema
+        readfile($filePath);
+        exit;
     }
 }
 

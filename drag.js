@@ -35,12 +35,29 @@ function handleFile(file) {
             fileType = 'document';
         }
 
-        loadedFile = file; // Guarda directamente el objeto File
-        resultDiv.innerHTML = `Archivo ${fileType} cargado: ${file.name}`;
+        loadedFile = file;
+        dropArea.innerHTML = `
+            <div class="file-info">
+                <span class="file-icon">📄</span>
+                <span class="file-name">${file.name}</span>
+                <button onclick="resetInput()" class="change-file-btn">Cambiar archivo</button>
+            </div>`;
     } else {
-        resultDiv.innerHTML = 'Por favor, carga un archivo válido.';
+        resetInput();
     }
 }
+
+function resetInput() {
+    dropArea.innerHTML = 'Arrastra y suelta un archivo aquí o haz clic para seleccionar un archivo.';
+    fileInput.value = ''; // Resetear el valor del input
+    loadedFile = null;
+}
+
+dropArea.addEventListener('click', () => {
+    if (!loadedFile) {
+        fileInput.click();
+    }
+});
 
 convertBtn.addEventListener('click', () => {
     if (!loadedFile) {
@@ -53,7 +70,7 @@ convertBtn.addEventListener('click', () => {
 
 function convertFile(file, type, toFormat) {
     const formData = new FormData();
-    formData.append('fileData', file); // Agrega el objeto File directamente
+    formData.append('fileData', file);
     formData.append('fileType', type);
     formData.append('toFormat', toFormat);
 
@@ -65,14 +82,18 @@ function convertFile(file, type, toFormat) {
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        return response.json();  // Solo intenta analizar como JSON si la respuesta fue exitosa
+        return response.blob(); // Manejar la respuesta como un blob
     })
-    .then(result => {
-        if (result.success) {
-            resultDiv.innerHTML = `Archivo convertido exitosamente a ${toFormat.toUpperCase()}. <a href="${result.filePath}" download>Descargar aquí</a>`;
-        } else {
-            resultDiv.innerHTML = `Hubo un error al convertir el archivo: ${result.message}`;
-        }
+    .then(blob => {
+        // Crear un enlace para descargar el archivo
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = 'converted-file'; // Puedes ajustar el nombre del archivo de descarga aquí
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
     })
     .catch(error => {
         console.error('Error:', error);
