@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y \
         libwebp-dev \
         libmagickwand-dev \
         ffmpeg \
-        libreoffice \
+        pandoc \
     && rm -rf /var/lib/apt/lists/* \
     && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
     && docker-php-ext-install -j$(nproc) gd \

@@ -6,8 +6,14 @@ $response = [
     'filePath' => ''
 ];
 
-if (!isset($_FILES['fileData']) || $_FILES['fileData']['error'] != 0) {
-    $response['message'] = 'Error al subir el archivo.';
+if (!isset($_FILES['fileData'])) {
+    $response['message'] = 'No se recibió ningún archivo.';
+    echo json_encode($response);
+    exit();
+}
+
+if ($_FILES['fileData']['error'] != 0) {
+    $response['message'] = 'Error al subir el archivo: ' . $_FILES['fileData']['error'];
     echo json_encode($response);
     exit();
 }
@@ -120,44 +126,34 @@ function convertImage($sourcePath, $toFormat, $destinationPath) {
 function convertDocument($sourcePath, $toFormat, $destinationPath) {
     global $response;
 
-    $formatExtensions = [
+    $formatMappings = [
         'pdf' => 'pdf',
-        'doc' => 'doc',
         'docx' => 'docx',
         'odt' => 'odt',
-        'txt' => 'txt'
+        'txt' => 'plain'
     ];
 
-    if (!isset($formatExtensions[$toFormat])) {
+    if (!isset($formatMappings[$toFormat])) {
         $response['message'] = 'Formato de documento no soportado.';
         return;
     }
 
-    $outputExt = $formatExtensions[$toFormat];
-
-    // Comando para convertir el documento
-    $command = "libreoffice --headless --convert-to $outputExt --outdir " . escapeshellarg(dirname($destinationPath)) . " " . escapeshellarg($sourcePath);
+    $pandocFormat = $formatMappings[$toFormat];
+    $command = "pandoc " . escapeshellarg($sourcePath) . " -o " . escapeshellarg($destinationPath) . " --to=" . escapeshellarg($pandocFormat);
 
     exec($command, $output, $returnVar);
 
     if ($returnVar !== 0) {
-        $response['message'] = 'Error al convertir el documento.';
+        $response['message'] = 'Error al convertir el documento: ' . implode("\n", $output);
         return;
     }
 
-    // El nombre del archivo generado puede no coincidir con $convertedFilePath debido a cómo funciona libreoffice.
-    // Asumiremos que mantiene el mismo nombre base pero cambia la extensión.
-    $generatedFilePath = dirname($destinationPath) . '/' . pathinfo($sourcePath, PATHINFO_FILENAME) . '.' . $outputExt;
-
-    if (file_exists($generatedFilePath)) {
-        // Renombramos el archivo para que coincida con nuestra estructura prevista.
-        rename($generatedFilePath, $destinationPath);
-
+    if (file_exists($destinationPath)) {
         $response['success'] = true;
         $response['message'] = 'Documento convertido con éxito.';
         sendFile($destinationPath, $toFormat);
     } else {
-        $response['message'] = 'Error al convertir el documento.';
+        $response['message'] = 'Error al convertir el documento. Archivo no encontrado.';
     }
 }
 
