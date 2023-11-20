@@ -12,14 +12,19 @@
             <label>Selecciona el formato al que deseas transformar</label>
             <select id="format-to">
                 <option value="pdf">PDF</option>
-                <option value="doc">DOC</option>
+                <option value="plain">PLAIN</option>
                 <option value="docx">DOCX</option>
                 <option value="odt">ODT</option>
-                <option value="txt">TXT</option>
+                <option value="markdown">MARKDOWN</option>
+                <option value="pptx">PPTX</option>
+                <option value="rtf">RTF</option>
+                <option value="ipynb">IPYNB</option>
+                <option value="json">JSON</option>
+                <option value="html">HTML</option>
             </select>
             <div class="drop-area">
                 Arrastra y suelta una imagen aquí o haz clic para seleccionar un archivo.
-                <input type="file" id="file-input" accept=".pdf,.doc,.docx,.txt,.odt">
+                <input type="file" id="file-input" accept=".pdf, .docx, .txt, .odt, .csv, .tsv, .ipynb, .json, .rtf, .html">
             </div>
             <button id="convert-btn">Convertir</button>
             <div id="result"></div>

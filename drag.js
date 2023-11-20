@@ -6,6 +6,7 @@ const formatSelectorTo = document.getElementById('format-to');
 
 let loadedFile;
 let fileType;
+let fileExtension;
 
 dropArea.addEventListener('dragover', (e) => {
     e.preventDefault();
@@ -20,12 +21,17 @@ dropArea.addEventListener('drop', (e) => {
     e.preventDefault();
     dropArea.classList.remove('active');
     const file = e.dataTransfer.files[0];
+    fileExtension = getFileExtension(file);
     handleFile(file);
 });
 
 fileInput.addEventListener('change', () => {
     const file = fileInput.files[0];
-    handleFile(file);
+    if (file) {
+        fileExtension = getFileExtension(file);
+        console.log("Extensión del archivo seleccionado:", fileExtension);
+        handleFile(file);
+    }
 });
 
 function handleFile(file) {
@@ -68,11 +74,19 @@ convertBtn.addEventListener('click', () => {
     convertFile(loadedFile, fileType, formatSelectorTo.value);
 });
 
+function getFileExtension(file) {
+    const fileName = file.name;
+    const lastDotIndex = fileName.lastIndexOf('.');
+    if (lastDotIndex === -1) return ''; // No hay punto en el nombre del archivo
+    return fileName.substring(lastDotIndex + 1).toLowerCase();
+}
+
 function convertFile(file, type, toFormat) {
     const formData = new FormData();
     formData.append('fileData', file);
     formData.append('fileType', type);
     formData.append('toFormat', toFormat);
+    formData.append('fileExtension', fileExtension || '');
 
     fetch('convertFile.php', {
         method: 'POST',

@@ -21,6 +21,7 @@ if ($_FILES['fileData']['error'] != 0) {
 $fileData = $_FILES['fileData'];
 $fileType = $_POST['fileType'];
 $toFormat = $_POST['toFormat'];
+$fileExtension = $_POST['fileExtension'];
 
 $targetDirectory = "uploads/";
 $convertedFileName = time() . "." . $toFormat;
@@ -124,22 +125,44 @@ function convertImage($sourcePath, $toFormat, $destinationPath) {
 }
 
 function convertDocument($sourcePath, $toFormat, $destinationPath) {
-    global $response;
+    global $response, $fromFormats, $toFormats;
 
-    $formatMappings = [
-        'pdf' => 'pdf',
+    // Mapeo de la extensión del archivo de origen al formato de Pandoc
+    $fromFormats = [
         'docx' => 'docx',
         'odt' => 'odt',
-        'txt' => 'plain'
+        'txt' => 'markdown',
+        'csv' => 'csv',
+        'tsv' => 'tsv',
+        'ipynb' => 'ipynb',
+        'json' => 'json',
+        'rtf' => 'rtf',
+        'html' => 'html'
     ];
 
-    if (!isset($formatMappings[$toFormat])) {
-        $response['message'] = 'Formato de documento no soportado.';
+    // Mapeo del formato de salida deseado al formato de Pandoc
+    $toFormats = [
+        'pdf' => 'pdf',
+        'docx' => 'docx',
+        'html' => 'html',
+        'plain' => 'plain',
+        'markdown' => 'markdown',
+        'pptx' => 'pptx',
+        'rtf' => 'rtf',
+        'ipynb' => 'ipynb',
+        'json' => 'json'
+    ];
+
+    $fileExtension = $_POST['fileExtension'];
+    $fromFormat = isset($fromFormats[$fileExtension]) ? $fromFormats[$fileExtension] : null;
+    $toFormatPandoc = isset($toFormats[$toFormat]) ? $toFormats[$toFormat] : null;
+
+    if (!$fromFormat || !$toFormatPandoc || !$fileExtension) {
+        $response['message'] = 'Formato de archivo no soportado para la conversión.';
         return;
     }
 
-    $pandocFormat = $formatMappings[$toFormat];
-    $command = "pandoc " . escapeshellarg($sourcePath) . " -o " . escapeshellarg($destinationPath) . " --to=" . escapeshellarg($pandocFormat);
+    $command = "pandoc --from=$fromFormat --to=$toFormatPandoc -o " . escapeshellarg($destinationPath) . " " . escapeshellarg($sourcePath);
 
     exec($command, $output, $returnVar);
 
