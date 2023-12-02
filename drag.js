@@ -1,116 +1,54 @@
-const dropArea = document.querySelector('.drop-area');
-const fileInput = document.getElementById('file-input');
-const resultDiv = document.getElementById('result');
-const convertBtn = document.getElementById('convert-btn');
-const formatSelectorTo = document.getElementById('format-to');
+document.addEventListener("DOMContentLoaded", function() {
+    const fileInput = document.getElementById('fileData');
+    const fileInfosContainer = document.getElementById('fileInfosContainer');
 
-let loadedFile;
-let fileType;
-let fileExtension;
-
-dropArea.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    dropArea.classList.add('active');
-});
-
-dropArea.addEventListener('dragleave', () => {
-    dropArea.classList.remove('active');
-});
-
-dropArea.addEventListener('drop', (e) => {
-    e.preventDefault();
-    dropArea.classList.remove('active');
-    const file = e.dataTransfer.files[0];
-    fileExtension = getFileExtension(file);
-    handleFile(file);
-});
-
-fileInput.addEventListener('change', () => {
-    const file = fileInput.files[0];
-    if (file) {
-        fileExtension = getFileExtension(file);
-        console.log("Extensión del archivo seleccionado:", fileExtension);
-        handleFile(file);
-    }
-});
-
-function handleFile(file) {
-    if (file) {
-        fileType = file.type.split('/')[0];
-        if (['image', 'audio', 'video'].indexOf(fileType) === -1) {
-            fileType = 'document';
-        }
-
-        loadedFile = file;
-        dropArea.innerHTML = `
-            <div class="file-info">
-                <span class="file-icon">📄</span>
-                <span class="file-name">${file.name}</span>
-                <button onclick="resetInput()" class="change-file-btn">Cambiar archivo</button>
-            </div>`;
-    } else {
-        resetInput();
-    }
-}
-
-function resetInput() {
-    dropArea.innerHTML = 'Arrastra y suelta un archivo aquí o haz clic para seleccionar un archivo.';
-    fileInput.value = ''; // Resetear el valor del input
-    loadedFile = null;
-}
-
-dropArea.addEventListener('click', () => {
-    if (!loadedFile) {
-        fileInput.click();
-    }
-});
-
-convertBtn.addEventListener('click', () => {
-    if (!loadedFile) {
-        resultDiv.innerHTML = 'Primero carga un archivo.';
-        return;
-    }
-
-    convertFile(loadedFile, fileType, formatSelectorTo.value);
-});
-
-function getFileExtension(file) {
-    const fileName = file.name;
-    const lastDotIndex = fileName.lastIndexOf('.');
-    if (lastDotIndex === -1) return ''; // No hay punto en el nombre del archivo
-    return fileName.substring(lastDotIndex + 1).toLowerCase();
-}
-
-function convertFile(file, type, toFormat) {
-    const formData = new FormData();
-    formData.append('fileData', file);
-    formData.append('fileType', type);
-    formData.append('toFormat', toFormat);
-    formData.append('fileExtension', fileExtension || '');
-
-    fetch('convertFile.php', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.blob(); // Manejar la respuesta como un blob
-    })
-    .then(blob => {
-        // Crear un enlace para descargar el archivo
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.style.display = 'none';
-        a.href = url;
-        a.download = 'converted-file'; // Puedes ajustar el nombre del archivo de descarga aquí
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        resultDiv.innerHTML = 'Hubo un error al procesar la respuesta del servidor.';
+    // Manejador para el evento 'change' del input de archivo
+    fileInput.addEventListener('change', () => {
+        // Limpiar la lista anterior de archivos
+        fileInfosContainer.innerHTML = '';
+        handleFiles(fileInput.files);
     });
+
+    // Función para manejar archivos seleccionados
+    function handleFiles(files) {
+        // Verificar si hay archivos
+        if (files.length === 0) {
+            fileInfosContainer.innerHTML = '<p>No hay archivos seleccionados.</p>';
+            return;
+        }
+
+        // Procesar cada archivo
+        Array.from(files).forEach(file => {
+            displayFile(file);
+        });
+    }
+
+    // Función para mostrar información del archivo en la página
+    function displayFile(file) {
+        const fileElement = document.createElement('div');
+        fileElement.classList.add('file-info');
+        fileElement.innerHTML = `
+            <span class="file-icon">📄</span>
+            <span class="file-name">${file.name}</span>
+            <button class="change-file-btn" onclick="removeFile('${file.name}')">Eliminar</button>
+        `;
+        fileInfosContainer.appendChild(fileElement);
+    }
+});
+
+// Función para eliminar un archivo de la lista
+function removeFile(fileName) {
+    const fileInput = document.getElementById('fileData');
+    const files = Array.from(fileInput.files);
+    const filteredFiles = files.filter(file => file.name !== fileName);
+    const dataTransfer = new DataTransfer();
+
+    // Agregar los archivos filtrados de nuevo al DataTransfer
+    filteredFiles.forEach(file => dataTransfer.items.add(file));
+
+    // Establecer los archivos del input a los archivos del DataTransfer
+    fileInput.files = dataTransfer.files;
+
+    // Actualizar visualización de archivos
+    document.querySelector(`.file-info:contains('${fileName}')`).remove();
 }

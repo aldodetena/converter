@@ -22,11 +22,11 @@
                 <option value="json">JSON</option>
                 <option value="html">HTML</option>
             </select>
-            <div class="drop-area">
-                Arrastra y suelta una imagen aquí o haz clic para seleccionar un archivo.
-                <input type="file" id="file-input" accept=".pdf, .docx, .txt, .odt, .csv, .tsv, .ipynb, .json, .rtf, .html">
-            </div>
-            <button id="convert-btn">Convertir</button>
+            <form method="post" action="convertFile.php" enctype="multipart/form-data">
+                <input type="file" id="fileData" name="fileData[]" accept=".pdf, .docx, .txt, .odt, .csv, .tsv, .ipynb, .json, .rtf, .html" multiple style="border: 2px dashed #ccc; padding: 20px; width: 100%; border-radius: 5px; cursor: pointer;">
+                <div id="fileInfosContainer"></div>
+                <button id="convert-btn" type="submit">Convertir</button>
+            </form>
             <div id="result"></div>
         </div>
         <script src="drag.js"></script>

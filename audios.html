@@ -16,12 +16,18 @@
                 <option value="ogg">OGG</option>
                 <option value="flac">FLAC</option>
                 <option value="m4a">M4A</option>
+                <option value="aac">AAC</option>
+                <option value="opus">Opus</option>
+                <option value="wma">WMA</option>
+                <option value="webm">WebM</option>
             </select>
-            <div class="drop-area">
-                Arrastra y suelta una imagen aquí o haz clic para seleccionar un archivo.
-                <input type="file" id="file-input" accept="audio/*">
-            </div>
-            <button id="convert-btn">Convertir</button>
+            <form method="post" action="convertFile.php" enctype="multipart/form-data">
+                <div class="drop-area">
+                    Arrastra y suelta un audio aquí o haz clic para seleccionar un archivo.
+                    <input type="file" id="fileData" name="fileData[]" accept="audio/*" multiple>
+                </div>
+                <button id="convert-btn" type="submit">Convertir</button>
+            </form>
             <div id="result"></div>
         </div>
         <script src="drag.js"></script>

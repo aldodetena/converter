@@ -1,3 +1,5 @@
+/* Estilos Index.html */
+
 .principal {
     font-family: Arial, sans-serif;
     background-color: #f0f0f0;
@@ -31,6 +33,8 @@
 .principal button:hover {
     background-color: #45a049;
 }
+
+/* Estilos html de images, documents, audios, videos*/
 
 body.images {
     font-family: 'Arial', sans-serif;
@@ -79,27 +83,59 @@ select {
     box-sizing: border-box;
 }
 
-.drop-area {
+#fileData {
     margin-top: 10px;
     border: 2px dashed #ccc;
     padding: 20px;
     border-radius: 5px;
-    position: relative;
+    width: 91% !important;
     cursor: pointer;
+    display: block; /* Muestra el input */
+    opacity: 0.7; /* Hace el input ligeramente transparente */
 }
 
-.drop-area:hover {
+#fileData:hover {
+    border-color: #007bff;
     background-color: #f9f9f9;
 }
 
-#file-input {
-    opacity: 0;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+#fileData.active {
+    border-color: #007bff;
+    background-color: #eef5ff;
+}
+
+.file-info {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
     cursor: pointer;
+}
+
+.file-icon {
+    font-size: 24px;
+    margin-right: 10px;
+}
+
+.file-name {
+    font-weight: bold;
+}
+
+.change-file-btn {
+    margin-left: 15px;
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.change-file-btn:hover {
+    background-color: #0056b3;
 }
 
 button {
@@ -114,56 +150,5 @@ button {
 }
 
 button:hover {
-    background-color: #0056b3;
-}
-
-#result {
-    margin-top: 20px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    display: none; /* Se muestra cuando haya un resultado */
-}
-
-.drop-area.active {
-    border-color: #007bff;
-    background-color: #eef5ff;
-}
-
-.file-info {
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    margin-top: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    background-color: #f9f9f9;
-    cursor: pointer; /* Asegúrate de que el cursor indique que es clickable */
-}
-
-.file-icon {
-    font-size: 24px;
-    margin-right: 10px;
-}
-
-.file-name {
-    font-weight: bold;
-}
-
-#file-input {
-    display: none; /* Oculta el input de archivo */
-}
-
-.change-file-btn {
-    margin-left: 15px;
-    padding: 5px 10px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.change-file-btn:hover {
     background-color: #0056b3;
 }
