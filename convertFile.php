@@ -1,5 +1,9 @@
 <?php
 
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: POST");
+header("Access-Control-Allow-Headers: Content-Type");
+
 $response = [];
 
 // Verifica si hay archivos subidos
@@ -8,14 +12,11 @@ if (!isset($_FILES['fileData']) || !is_array($_FILES['fileData']['name']) || cou
     exit();
 }
 
-echo '<pre>'; print_r($_FILES['fileData']); echo '</pre>';
-
 $numberOfFiles = count($_FILES['fileData']['name']);
 
 // Asegurarse de que los datos están en formato array
-$fileTypes = isset($_POST['fileType']) && is_array($_POST['fileType']) ? $_POST['fileType'] : [];
-$toFormats = isset($_POST['toFormat']) && is_array($_POST['toFormat']) ? $_POST['toFormat'] : [];
-$fileExtensions = isset($_POST['fileExtension']) && is_array($_POST['fileExtension']) ? $_POST['fileExtension'] : [];
+$fileTypes = isset($_FILES['fileData']['type']) && $_FILES['fileData']['type'] != null ? $_FILES['fileData']['type'] : '';
+$toFormats = isset($_POST['toFormat']) && $_POST['toFormat'] != null ? $_POST['toFormat'] : '';
 
 for ($i = 0; $i < $numberOfFiles; $i++) {
     if ($_FILES['fileData']['error'][$i] != 0) {
@@ -29,80 +30,63 @@ for ($i = 0; $i < $numberOfFiles; $i++) {
     }
 
     $fileTmpPath = $_FILES['fileData']['tmp_name'][$i];
+    $fileTmpType = $_FILES['fileData']['type'][$i];
     $fileType = $fileTypes[$i] ?? null;
-    $toFormat = $toFormats[$i] ?? null;
-    $fileExtension = $fileExtensions[$i] ?? null;
 
     $targetDirectory = "uploads/";
-    $convertedFileName = time() . "_{$i}." . $toFormat;
+    $convertedFileName = time() . "_{$i}." . $toFormats;
     $convertedFilePath = $targetDirectory . $convertedFileName;
 
-    // Verificación de MIME type
-    $allowedMimes = [
-        'image' => [
-            'image/jpeg',
-            'image/png',
-            'image/bmp',
-            'image/gif',
-            'image/tiff',
-            'image/webp',
-            'image/svg+xml',
-            'image/pdf',
-            'image/eps',
-            'image/ico',
-            'image/cur'
-        ],
-        'document' => [
-            'application/msword', // .doc
-            'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
-            'application/pdf', // .pdf
-            'application/vnd.oasis.opendocument.text', // .odt
-            'text/plain', // .txt
-            'text/csv', // .csv
-            'text/tab-separated-values', // .tsv
-            'application/x-ipynb+json', // .ipynb (formato común para Jupyter Notebooks)
-            'application/json', // .json
-            'application/rtf', // .rtf
-            'text/html' // .html
-        ],
-        'audio' => [
-            'audio/mpeg', // MP3
-            'audio/wav', // WAV
-            'audio/ogg', // OGG
-            'audio/flac', // FLAC
-            'audio/x-m4a', // M4A
-            'audio/aac', // AAC
-            'audio/opus', // Opus
-            'audio/x-ms-wma', // WMA
-            'audio/vnd.wave', // Alternativa para WAV
-            'audio/webm' // WebM audio
-        ],
-        'video' => [
-            'video/mp4', // MP4
-            'video/x-matroska', // MKV
-            'video/x-msvideo', // AVI
-            'video/webm', // WebM
-            'video/quicktime', // MOV
-            'video/x-flv', // FLV
-            'video/x-ms-wmv', // WMV
-            'video/3gpp', // 3GP
-            'video/mpeg', // MPEG
-            'video/vob' // VOB
-        ]
-    ];
-
     switch ($fileType) {
-        case 'image':
-            $result = convertImage($fileTmpPath, $toFormat, $convertedFilePath);
+        case 'image/jpeg': //jpeg
+        case 'image/png': //png
+        case 'image/bmp': //bmp
+        case 'image/gif': //gif
+        case 'image/tiff': //tiff
+        case 'image/webp': //webp
+        case 'image/svg+xml': // svg
+        case 'image/pdf': //pdf
+        case 'image/eps': //eps
+        case 'image/ico': //ico
+        case 'image/cur': //cur
+            $result = convertImage($fileTmpPath, $toFormats, $convertedFilePath);
             break;
-        case 'document':
-            $result = convertDocument($fileTmpPath, $toFormat, $convertedFilePath);
+        case 'application/msword': // doc
+        case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document': // docx
+        case 'application/pdf': // pdf
+        case 'application/vnd.oasis.opendocument.text': // odt
+        case 'text/plain': // txt
+        case 'text/csv': // csv
+        case 'text/tab-separated-values': // tsv
+        case 'application/x-ipynb+json': // ipynb (formato común para Jupyter Notebooks)
+        case 'application/json': // json
+        case 'application/rtf': // rtf
+        case 'text/html': // html
+            $result = convertDocument($fileTmpPath, $fileTmpType, $toFormats, $convertedFilePath);
             break;
-        case 'audio':
-            $result = convertAudio($fileTmpPath, $toFormat, $convertedFilePath);
+        case 'audio/mpeg': // MP3
+        case 'audio/wav': // WAV
+        case 'audio/ogg': // OGG
+        case 'audio/flac': // FLAC
+        case 'audio/x-m4a': // M4A
+        case 'audio/aac': // AAC
+        case 'audio/opus': // Opus
+        case 'audio/x-ms-wma': // WMA
+        case 'audio/vnd.wave': // Alternativa para WAV
+        case 'audio/webm': // WebM audio
+            $result = convertAudio($fileTmpPath, $toFormats, $convertedFilePath);
             break;
-        case 'video':
-            $result = convertVideo($fileTmpPath, $toFormat, $convertedFilePath);
+        case 'video/mp4': // MP4
+        case 'video/x-matroska': // MKV
+        case 'video/x-msvideo': // AVI
+        case 'video/webm': // WebM
+        case 'video/quicktime': // MOV
+        case 'video/x-flv': // FLV
+        case 'video/x-ms-wmv': // WMV
+        case 'video/3gpp': // 3GP
+        case 'video/mpeg': // MPEG
+        case 'video/vob': // VOB
+            $result = convertVideo($fileTmpPath, $toFormats, $convertedFilePath);
             break;
         default:
             $result = ['success' => false, 'message' => 'Tipo de archivo no soportado.'];
@@ -123,8 +107,8 @@ function convertImage($sourcePath, $toFormat, $destinationPath) {
         switch ($toFormat) {
             case 'jpg':
                 $image->setImageFormat('jpeg');
-                $imagick->setImageCompression(Imagick::COMPRESSION_JPEG);
-                $imagick->setImageCompressionQuality(90);
+                $image->setImageCompression(Imagick::COMPRESSION_JPEG);
+                $image->setImageCompressionQuality(90);
                 break;
             case 'png':
                 $image->setImageFormat('png');
@@ -142,7 +126,12 @@ function convertImage($sourcePath, $toFormat, $destinationPath) {
                 $image->setImageFormat('webp');
                 break;
             case 'svg':
-                $image->setImageFormat('svg');
+                // Asegúrate de que la extensión del archivo de salida es .svg
+                $destinationPath = preg_replace('/\.[^.]+$/', '.svg', $destinationPath);
+                // Construye el comando Inkscape con las rutas de archivo correctas
+                $command = "inkscape " . escapeshellarg($sourcePath) . " --export-type=svg --output=" . escapeshellarg($destinationPath);
+                // Ejecuta el comando y captura la salida y el código de retorno
+                exec($command, $output, $returnVar);
                 break;
             case 'pdf':
                 $image->setImageFormat('pdf');
@@ -157,12 +146,14 @@ function convertImage($sourcePath, $toFormat, $destinationPath) {
                 $image->setImageFormat('cur');
                 break;
             default:
-                $response['message'] = 'Formato de imagen no soportado.';
-                return;
+                return [
+                    'success' => false,
+                    'message' => 'Formato de imagen no soportado.'
+                ];
         }
 
         $image->writeImage($destinationPath);
-        sendFile($destinationPath, $toFormat);
+        sendFile($destinationPath);
         return [
             'success' => true,
             'message' => 'Imagen convertida con éxito.',
@@ -177,20 +168,20 @@ function convertImage($sourcePath, $toFormat, $destinationPath) {
     }
 }
 
-function convertDocument($sourcePath, $toFormat, $destinationPath) {
-    global $response, $fromFormats, $toFormats;
+function convertDocument($sourcePath, $fileTmpType, $toFormat, $destinationPath) {
+    global $response;
 
-    // Mapeo de la extensión del archivo de origen al formato de Pandoc
-    $fromFormats = [
-        'docx' => 'docx',
-        'odt' => 'odt',
-        'txt' => 'markdown',
-        'csv' => 'csv',
-        'tsv' => 'tsv',
-        'ipynb' => 'ipynb',
-        'json' => 'json',
-        'rtf' => 'rtf',
-        'html' => 'html'
+    // Mapeo de tipos MIME al formato de Pandoc
+    $mimeToFormat = [
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'docx',
+        'application/vnd.oasis.opendocument.text' => 'odt',
+        'text/plain' => 'markdown',
+        'text/csv' => 'csv',
+        'text/tab-separated-values' => 'tsv',
+        'application/x-ipynb+json' => 'ipynb',
+        'application/json' => 'json',
+        'application/rtf' => 'rtf',
+        'text/html' => 'html'
     ];
 
     // Mapeo del formato de salida deseado al formato de Pandoc
@@ -206,13 +197,14 @@ function convertDocument($sourcePath, $toFormat, $destinationPath) {
         'json' => 'json'
     ];
 
-    $fileExtension = $_POST['fileExtension'];
-    $fromFormat = isset($fromFormats[$fileExtension]) ? $fromFormats[$fileExtension] : null;
+    $fromFormat = isset($mimeToFormat[$fileTmpType]) ? $mimeToFormat[$fileTmpType] : null;
     $toFormatPandoc = isset($toFormats[$toFormat]) ? $toFormats[$toFormat] : null;
 
-    if (!$fromFormat || !$toFormatPandoc || !$fileExtension) {
-        $response['message'] = 'Formato de archivo no soportado para la conversión.';
-        return;
+    if (!$fromFormat || !$toFormatPandoc) {
+        return [
+            'success' => false,
+            'message' => 'Formato de archivo no soportado para la conversión.'
+        ];
     }
 
     $command = "pandoc --from=$fromFormat --to=$toFormatPandoc -o " . escapeshellarg($destinationPath) . " " . escapeshellarg($sourcePath);
@@ -220,18 +212,14 @@ function convertDocument($sourcePath, $toFormat, $destinationPath) {
     exec($command, $output, $returnVar);
 
     if ($returnVar !== 0) {
-        $response['message'] = 'Error al convertir el documento: ' . implode("\n", $output);
-        return;
+        return [
+            'success' => false,
+            'message' => 'Error al convertir el documento: ' . implode("\n", $output)
+        ];
     }
 
-    // if (file_exists($destinationPath)) {
-    //     $response['success'] = true;
-    //     $response['message'] = 'Documento convertido con éxito.';
-    //     sendFile($destinationPath, $toFormat);
-    // } else {
-    //     $response['message'] = 'Error al convertir el documento. Archivo no encontrado.';
-    // }
     if (file_exists($destinationPath)) {
+        sendFile($destinationPath);
         return [
             'success' => true,
             'message' => 'Documento convertido con éxito.',
@@ -263,8 +251,10 @@ function convertAudio($sourcePath, $toFormat, $destinationPath) {
     ];
 
     if (!isset($audioExtensions[$toFormat])) {
-        $response['message'] = 'Formato de audio no soportado.';
-        return;
+        return [
+            'success' => false,
+            'message' => 'Formato de audio no soportado.'
+        ];
     }
 
     $outputExt = $audioExtensions[$toFormat];
@@ -276,19 +266,14 @@ function convertAudio($sourcePath, $toFormat, $destinationPath) {
     exec($command, $output, $returnVar);
 
     if ($returnVar !== 0) {
-        $response['message'] = 'Error al convertir el audio: ' . implode("\n", $output);
-        return;
+        return [
+            'success' => false,
+            'message' => 'Error al convertir el audio: ' . implode("\n", $output)
+        ];
     }
 
-    // if (file_exists($destinationPath)) {
-    //     $response['success'] = true;
-    //     $response['message'] = 'Audio convertido con éxito.';
-    //     sendFile($destinationPath, $toFormat);
-    // } else {
-    //     $response['message'] = 'Error al convertir el audio.';
-    // }
-
     if (file_exists($destinationPath)) {
+        sendFile($destinationPath);
         return [
             'success' => true,
             'message' => 'Audio convertido con éxito.',
@@ -322,8 +307,10 @@ function convertVideo($sourcePath, $toFormat, $destinationPath) {
     ];
 
     if (!isset($videoExtensions[$toFormat])) {
-        $response['message'] = 'Formato de video no soportado.';
-        return;
+        return [
+            'success' => false,
+            'message' => 'Formato de video no soportado.'
+        ];
     }
 
     $outputExt = $videoExtensions[$toFormat];
@@ -335,18 +322,14 @@ function convertVideo($sourcePath, $toFormat, $destinationPath) {
     exec($command, $output, $returnVar);
 
     if ($returnVar !== 0) {
-        $response['message'] = 'Error al convertir el video: ' . implode("\n", $output);
-        return;
+        return [
+            'success' => false,
+            'message' => 'Error al convertir el video: ' . implode("\n", $output)
+        ];
     }
 
-    // if (file_exists($destinationPath)) {
-    //     $response['success'] = true;
-    //     $response['message'] = 'Video convertido con éxito.';
-    //     sendFile($destinationPath, $toFormat);
-    // } else {
-    //     $response['message'] = 'Error al convertir el video.';
-    // }
     if (file_exists($destinationPath)) {
+        sendFile($destinationPath);
         return [
             'success' => true,
             'message' => 'Video convertido con éxito.',
@@ -360,7 +343,7 @@ function convertVideo($sourcePath, $toFormat, $destinationPath) {
     }
 }
 
-function sendFile($filePath, $format) {
+function sendFile($filePath) {
     // Asegurarse de que el archivo existe
     if (file_exists($filePath)) {
         // Establecer los encabezados para la descarga

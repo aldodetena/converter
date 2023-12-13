@@ -10,26 +10,22 @@
         <div class="container">
             <a href="index.html" class="back-btn">&#8592;</a>
             <label>Selecciona el formato al que deseas transformar</label>
-            <select id="format-to">
-                <option value="mp4">MP4</option>
-                <option value="mkv">MKV</option>
-                <option value="avi">AVI</option>
-                <option value="webm">WebM</option>
-                <option value="mov">MOV</option>
-                <option value="flv">FLV</option>
-                <option value="wmv">WMV</option>
-                <option value="3gp">3GP</option>
-                <option value="mpg">MPEG</option>
-                <option value="vob">VOB</option>
-            </select>
             <form method="post" action="convertFile.php" enctype="multipart/form-data">
-                <div class="drop-area">
-                    Arrastra y suelta un video aquí o haz clic para seleccionar un archivo.
-                    <input type="file" id="fileData" name="fileData[]" accept="video/*" multiple>
-                </div>
-                <button id="convert-btn" type="submit">Convertir</button>
+                <select id="format-to" name="toFormat">
+                    <option value="mp4">MP4</option>
+                    <option value="mkv">MKV</option>
+                    <option value="avi">AVI</option>
+                    <option value="webm">WebM</option>
+                    <option value="mov">MOV</option>
+                    <option value="flv">FLV</option>
+                    <option value="wmv">WMV</option>
+                    <option value="3gp">3GP</option>
+                    <option value="mpg">MPEG</option>
+                    <option value="vob">VOB</option>
+                </select>
+                <input type="file" id="fileData" name="fileData[]" accept="video/*" multiple>
+                <div id="fileInfosContainer"></div>
             </form>
-            <div id="result"></div>
         </div>
         <script src="drag.js"></script>
     </body>

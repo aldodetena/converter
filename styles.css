@@ -95,8 +95,8 @@ select {
 }
 
 #fileData:hover {
+    background-color: #eef5ff;
     border-color: #007bff;
-    background-color: #f9f9f9;
 }
 
 #fileData.active {
@@ -107,12 +107,23 @@ select {
 .file-info {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     padding: 10px;
     margin-top: 10px;
     border: 1px solid #ddd;
     border-radius: 5px;
     background-color: #f9f9f9;
-    cursor: pointer;
+}
+
+.file-info-content {
+    display: flex;
+    align-items: center;
+    flex-grow: 1; /* Esto asegura que el contenido ocupe el espacio disponible */
+}
+
+.file-buttons {
+    display: flex;
+    align-items: center;
 }
 
 .file-icon {
@@ -122,10 +133,12 @@ select {
 
 .file-name {
     font-weight: bold;
+    margin-right: 30px;
 }
 
 .change-file-btn {
-    margin-left: 15px;
+    margin-left: 20px;
+    margin-bottom: 10px;
     padding: 5px 10px;
     background-color: #007bff;
     color: white;

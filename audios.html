@@ -10,25 +10,21 @@
         <div class="container">
             <a href="index.html" class="back-btn">&#8592;</a>
             <label>Selecciona el formato al que deseas transformar</label>
-            <select id="format-to">
-                <option value="mp3">MP3</option>
-                <option value="wav">WAV</option>
-                <option value="ogg">OGG</option>
-                <option value="flac">FLAC</option>
-                <option value="m4a">M4A</option>
-                <option value="aac">AAC</option>
-                <option value="opus">Opus</option>
-                <option value="wma">WMA</option>
-                <option value="webm">WebM</option>
-            </select>
             <form method="post" action="convertFile.php" enctype="multipart/form-data">
-                <div class="drop-area">
-                    Arrastra y suelta un audio aquí o haz clic para seleccionar un archivo.
-                    <input type="file" id="fileData" name="fileData[]" accept="audio/*" multiple>
-                </div>
-                <button id="convert-btn" type="submit">Convertir</button>
+                <select id="format-to" name="toFormat">
+                    <option value="mp3">MP3</option>
+                    <option value="wav">WAV</option>
+                    <option value="ogg">OGG</option>
+                    <option value="flac">FLAC</option>
+                    <option value="m4a">M4A</option>
+                    <option value="aac">AAC</option>
+                    <option value="opus">Opus</option>
+                    <option value="wma">WMA</option>
+                    <option value="webm">WebM</option>
+                </select>
+                <input type="file" id="fileData" name="fileData[]" accept="audio/*" multiple>
+                <div id="fileInfosContainer"></div>
             </form>
-            <div id="result"></div>
         </div>
         <script src="drag.js"></script>
     </body>

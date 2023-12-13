@@ -10,27 +10,23 @@
         <div class="container">
             <a href="index.html" class="back-btn">&#8592;</a>
             <label>Selecciona el formato al que deseas transformar</label>
-            <select id="format-to">
-                <option value="jpg">JPG</option>
-                <option value="png">PNG</option>
-                <option value="bmp">BMP</option>
-                <option value="gif">GIF</option>
-                <option value="tiff">TIFF</option>
-                <option value="webp">WEBP</option>
-                <option value="svg">SVG</option>
-                <option value="pdf">PDF</option>
-                <option value="eps">EPS</option>
-                <option value="ico">ICO</option>
-                <option value="cur">CUR</option>
-            </select>
             <form method="post" action="convertFile.php" enctype="multipart/form-data">
-                <div class="drop-area">
-                    Arrastra y suelta una imagen aquí o haz clic para seleccionar un archivo.
-                    <input type="file" id="fileData" name="fileData[]" accept="image/*" multiple>
-                </div>
-                <button id="convert-btn" type="submit">Convertir</button>
+                <select id="format-to" name="toFormat">
+                    <option value="jpg">JPG</option>
+                    <option value="png">PNG</option>
+                    <option value="bmp">BMP</option>
+                    <option value="gif">GIF</option>
+                    <option value="tiff">TIFF</option>
+                    <option value="webp">WEBP</option>
+                    <option value="svg">SVG</option>
+                    <option value="pdf">PDF</option>
+                    <option value="eps">EPS</option>
+                    <option value="ico">ICO</option>
+                    <option value="cur">CUR</option>
+                </select>
+                <input type="file" id="fileData" name="fileData[]" accept="image/*" multiple>
+                <div id="fileInfosContainer"></div>
             </form>
-            <div id="result"></div>
         </div>
         <script src="drag.js"></script>
     </body>

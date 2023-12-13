@@ -10,6 +10,10 @@ RUN apt-get update && apt-get install -y \
         libmagickwand-dev \
         ffmpeg \
         pandoc \
+        texlive-latex-base \
+        texlive-fonts-recommended \
+        texlive-latex-extra \
+        potrace \
     && rm -rf /var/lib/apt/lists/* \
     && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
     && docker-php-ext-install -j$(nproc) gd \
