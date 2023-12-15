@@ -4,6 +4,8 @@ header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Allow-Headers: Content-Type");
 
+clearUploadsDirectory('uploads');
+
 $response = [];
 
 // Verifica si hay archivos subidos
@@ -104,6 +106,13 @@ function convertImage($sourcePath, $toFormat, $destinationPath) {
     try {
         $image = new Imagick($sourcePath);
 
+        // Revisa el tamaño de la imagen y ajusta si es necesario
+        if ($toFormat === 'ico' || $toFormat === 'cur') {
+            // Define el tamaño máximo permitido
+            $maxSize = 256;
+            $image->thumbnailImage($maxSize, $maxSize, true);
+        }
+
         switch ($toFormat) {
             case 'jpg':
                 $image->setImageFormat('jpeg');
@@ -126,12 +135,13 @@ function convertImage($sourcePath, $toFormat, $destinationPath) {
                 $image->setImageFormat('webp');
                 break;
             case 'svg':
-                // Asegúrate de que la extensión del archivo de salida es .svg
-                $destinationPath = preg_replace('/\.[^.]+$/', '.svg', $destinationPath);
-                // Construye el comando Inkscape con las rutas de archivo correctas
-                $command = "inkscape " . escapeshellarg($sourcePath) . " --export-type=svg --output=" . escapeshellarg($destinationPath);
-                // Ejecuta el comando y captura la salida y el código de retorno
-                exec($command, $output, $returnVar);
+                // Convertir a PNM usando ImageMagick para preparar la imagen para potrace
+                $pnmPath = tempnam(sys_get_temp_dir(), 'convert') . '.pnm';
+                $image->writeImage($pnmPath);
+
+                // Ejecutar potrace para convertir de PNM a SVG
+                $potraceCommand = "potrace $pnmPath -s -o $destinationPath";
+                exec($potraceCommand, $output, $returnVar);
                 break;
             case 'pdf':
                 $image->setImageFormat('pdf');
@@ -152,7 +162,10 @@ function convertImage($sourcePath, $toFormat, $destinationPath) {
                 ];
         }
 
-        $image->writeImage($destinationPath);
+        if ($toFormat != 'svg'){
+            $image->writeImage($destinationPath);
+        }
+
         sendFile($destinationPath);
         return [
             'success' => true,
@@ -357,6 +370,20 @@ function sendFile($filePath) {
         flush(); // Vaciar buffers del sistema
         readfile($filePath);
         exit;
+    }
+}
+
+function clearUploadsDirectory($directory) {
+    // Abre el directorio
+    $files = glob($directory . '/*');
+
+    // Recorre los archivos
+    foreach ($files as $file) {
+        // Asegúrate de que es un archivo y no un directorio
+        if (is_file($file)) {
+            // Elimina el archivo
+            unlink($file);
+        }
     }
 }
 ?>

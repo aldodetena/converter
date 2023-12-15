@@ -21,8 +21,10 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-enable imagick
 
 # Copiar el código fuente de la aplicación al contenedor
+# Organizar los copiados para que no se repitan
 COPY converter/ /var/www/html
 COPY php.ini /usr/local/etc/php/conf.d/custom-php.ini
+COPY converter/policy.xml /etc/ImageMagick-6/policy.xml
 
 # Configurar Apache (opcional, según tus necesidades)
 # COPY ./apache.conf /etc/apache2/sites-available/000-default.conf
