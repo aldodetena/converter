@@ -24,29 +24,85 @@ function updateFileList() {
 
 // Función para eliminar un archivo de la lista
 function removeFile(event, fileName) {
-    event.preventDefault(); 
+    event.preventDefault(); // Previene el envío del formulario
+
+    // Filtrar el archivo a eliminar del arreglo selectedFiles
     selectedFiles = selectedFiles.filter(file => file.name !== fileName);
+
+    // Actualizar la lista de archivos mostrada
     updateFileList();
+
+    // Actualiza el input con los archivos restantes
+    updateFileInput();
 }
 
-// Función para subir un archivo
+// Función para actualizar el input con los archivos seleccionados
+function updateFileInput() {
+    const fileInput = document.getElementById('fileData');
+    const dataTransfer = new DataTransfer();
+    selectedFiles.forEach(file => dataTransfer.items.add(file));
+    fileInput.files = dataTransfer.files;
+}
+
+// Función para subir archivos
 function uploadFile(fileName) {
     const file = selectedFiles.find(file => file.name === fileName);
     if (!file) return;
 
     const formData = new FormData();
-    formData.append('fileData', file);
+    formData.append('fileData', file); // Cambia esto para enviar un solo archivo
+
+    const selectedFormat = document.getElementById('format-to').value;
+    formData.append('toFormat', selectedFormat);
+
+    const fileIndex = selectedFiles.indexOf(file);
+    updateUIForUploadProgress(fileIndex);
 
     fetch('convertFile.php', {
         method: 'POST',
         body: formData
     })
-    .then(response => response.json())
-    .then(data => {
-        console.log('Respuesta del servidor:', data);
-        // Aquí puedes manejar la respuesta del servidor, como mostrar un enlace de descarga o mensajes
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
     })
-    .catch(error => console.error('Error:', error));
+    .then(data => {
+        updateUIForDownloadLink(data, fileIndex);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        updateUIForUploadError(fileIndex);
+    });
+}
+
+function updateUIForUploadProgress(index) {
+    const fileInfosContainer = document.getElementById('fileInfosContainer');
+    const btnContainer = fileInfosContainer.querySelectorAll('.file-buttons')[index];
+    btnContainer.innerHTML = '<div class="progress-bar"><div class="progress"></div></div>';
+}
+
+function updateUIForDownloadLink(fileData, index) {
+    const fileInfosContainer = document.getElementById('fileInfosContainer');
+    const btnContainer = fileInfosContainer.querySelectorAll('.file-buttons')[index];
+    if (fileData.success) {
+        btnContainer.innerHTML = `<button class="download-btn" onclick="downloadFile('${fileData.filePath}', event)">Descargar</button>`;
+    } else {
+        btnContainer.innerHTML = `<p>Error: ${fileData.message}</p>`;
+    }
+}
+
+function updateUIForUploadError(index) {
+    const fileInfosContainer = document.getElementById('fileInfosContainer');
+    const btnContainer = fileInfosContainer.querySelectorAll('.file-buttons')[index];
+    btnContainer.innerHTML = '<p>Error al subir el archivo.</p>';
+}
+
+function downloadFile(filePath, event) {
+    event.preventDefault();
+    event.stopPropagation();
+    window.open(filePath, '_blank');
 }
 
 document.addEventListener("DOMContentLoaded", function() {
