@@ -26,8 +26,9 @@ RUN mkdir /var/www/html/uploads && chmod 777 /var/www/html/uploads
 
 # Copiar el código fuente de la aplicación al contenedor
 COPY converter/ /var/www/html
-COPY php.ini /usr/local/etc/php/conf.d/custom-php.ini
+COPY converter/php.ini /usr/local/etc/php/conf.d/custom-php.ini
 COPY converter/policy.xml /etc/ImageMagick-6/policy.xml
+RUN rm /var/www/html/php.ini
 
 # Crear un archivo para el cron job
 RUN echo "0 * * * * /usr/local/bin/php /var/www/html/clean.php >> /var/log/cron.log 2>&1" > /etc/cron.d/clear-uploads-cron
