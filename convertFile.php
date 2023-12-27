@@ -110,23 +110,11 @@ function convertImage($sourcePath, $toFormat, $destinationPath) {
             case 'bmp':
                 $image->setImageFormat('bmp');
                 break;
-            case 'gif':
-                $image->setImageFormat('gif');
-                break;
             case 'tiff':
                 $image->setImageFormat('tiff');
                 break;
             case 'webp':
                 $image->setImageFormat('webp');
-                break;
-            case 'svg':
-                // Convertir a PNM usando ImageMagick para preparar la imagen para potrace
-                $pnmPath = tempnam(sys_get_temp_dir(), 'convert') . '.pnm';
-                $image->writeImage($pnmPath);
-
-                // Ejecutar potrace para convertir de PNM a SVG
-                $potraceCommand = "potrace $pnmPath -s -o $destinationPath";
-                exec($potraceCommand, $output, $returnVar);
                 break;
             case 'pdf':
                 $image->setImageFormat('pdf');
