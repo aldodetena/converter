@@ -25,10 +25,9 @@ RUN apt-get update && apt-get install -y \
 RUN mkdir /var/www/html/uploads && chmod 777 /var/www/html/uploads
 
 # Copiar el código fuente de la aplicación al contenedor
-COPY converter/ /var/www/html
-COPY converter/php.ini /usr/local/etc/php/conf.d/custom-php.ini
-COPY converter/policy.xml /etc/ImageMagick-6/policy.xml
-RUN rm /var/www/html/php.ini
+COPY . /var/www/html
+COPY php.ini /usr/local/etc/php/conf.d/custom-php.ini
+COPY policy.xml /etc/ImageMagick-6/policy.xml
 
 # Crear un archivo para el cron job
 RUN echo "0 * * * * /usr/local/bin/php /var/www/html/clean.php >> /var/log/cron.log 2>&1" > /etc/cron.d/clear-uploads-cron
@@ -44,3 +43,6 @@ EXPOSE 80
 
 # Comando para iniciar Apache y cron en el contenedor
 CMD cron && apache2-foreground
+
+RUN rm /var/www/html/php.ini
+RUN rm /var/www/html/Dockerfile
