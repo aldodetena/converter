@@ -15,12 +15,13 @@ if (!isset($_FILES['fileData']['name']) || $_FILES['fileData']['name'] == null) 
 // Almacenar los datos del archivo
 $fileTmpPath = $_FILES['fileData']['tmp_name'];
 $fileTmpType = $_FILES['fileData']['type'];
+$fileName = pathinfo($_FILES['fileData']['name']);
 $fileType = $fileTmpType ?? null;
 $toFormat = isset($_POST['toFormat']) ? $_POST['toFormat'] : '';
 
 // Nombre y ruta del archivo de destino
 $targetDirectory = "uploads/";
-$convertedFileName = time() . "_converted." . $toFormat;
+$convertedFileName = $fileName['filename'] . "." . $toFormat;
 $convertedFilePath = $targetDirectory . $convertedFileName;
 
 // Procesar la conversión según el tipo de archivo
