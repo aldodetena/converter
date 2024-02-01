@@ -1,32 +1,42 @@
 <?php
 
+// Permite el acceso a todos los orígenes mediante CORS
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Allow-Headers: Content-Type");
 
+// Inicializa la respuesta como un arreglo vacío
 $response = [];
 
-// Verifica si hay archivo subido
+/**
+ * Verifica si se ha subido un archivo correctamente.
+ * Si no hay archivo, finaliza la ejecución y devuelve un mensaje de error.
+ */
 if (!isset($_FILES['fileData']['name']) || $_FILES['fileData']['name'] == null) {
     echo json_encode(['success' => false, 'message' => 'No se recibió archivo.']);
     exit();
 }
 
-// Almacenar los datos del archivo
+// Almacena los datos del archivo subido para su procesamiento
 $fileTmpPath = $_FILES['fileData']['tmp_name'];
 $fileTmpType = $_FILES['fileData']['type'];
 $fileName = pathinfo($_FILES['fileData']['name']);
-$fileType = $fileTmpType ?? null;
-$toFormat = isset($_POST['toFormat']) ? $_POST['toFormat'] : '';
+$fileType = $fileTmpType ?? null; // Utiliza el tipo de archivo temporal si está disponible
+$toFormat = isset($_POST['toFormat']) ? $_POST['toFormat'] : ''; // Formato de destino deseado
 
-// Nombre y ruta del archivo de destino
+// Prepara el nombre y la ruta del archivo de destino
 $targetDirectory = "uploads/";
 $convertedFileName = $fileName['filename'] . "." . $toFormat;
 $convertedFilePath = $targetDirectory . $convertedFileName;
 
-// Procesar la conversión según el tipo de archivo
+/**
+ * Procesa la conversión del archivo subido según su tipo.
+ * Utiliza diferentes funciones de conversión basadas en el tipo de archivo.
+ */
 $result = [];
 switch ($fileType) {
+    // Lista de casos para diferentes tipos de archivo (imagen, documento, audio, video)
+    // Cada caso llama a una función específica de conversión y almacena el resultado.
     case 'image/jpeg': //jpeg
     case 'image/png': //png
     case 'image/bmp': //bmp
@@ -82,10 +92,19 @@ switch ($fileType) {
         break;
 }
 
+// Agrega el resultado de la conversión a la respuesta y la devuelve
 $response[] = $result;
 
 echo json_encode($response);
 
+/**
+ * Convierte imágenes a diferentes formatos.
+ * 
+ * @param string $sourcePath Ruta del archivo fuente.
+ * @param string $toFormat Formato de destino para la conversión.
+ * @param string $destinationPath Ruta del archivo de destino.
+ * @return array Resultado de la conversión.
+ */
 function convertImage($sourcePath, $toFormat, $destinationPath) {
     global $response;
 
@@ -154,6 +173,15 @@ function convertImage($sourcePath, $toFormat, $destinationPath) {
     }
 }
 
+/**
+ * Convierte documentos a diferentes formatos.
+ * 
+ * @param string $sourcePath Ruta del archivo fuente.
+ * @param string $fileTmpType Tipo MIME del archivo fuente.
+ * @param string $toFormat Formato de destino para la conversión.
+ * @param string $destinationPath Ruta del archivo de destino.
+ * @return array Resultado de la conversión.
+ */
 function convertDocument($sourcePath, $fileTmpType, $toFormat, $destinationPath) {
     global $response;
 
@@ -218,21 +246,28 @@ function convertDocument($sourcePath, $fileTmpType, $toFormat, $destinationPath)
     }
 }
 
+/**
+ * Convierte audio a diferentes formatos.
+ * 
+ * @param string $sourcePath Ruta del archivo fuente.
+ * @param string $toFormat Formato de destino para la conversión.
+ * @param string $destinationPath Ruta del archivo de destino.
+ * @return array Resultado de la conversión.
+ */
 function convertAudio($sourcePath, $toFormat, $destinationPath) {
     global $response;
 
-    // Ampliar el mapeo para incluir más formatos de audio
     $audioExtensions = [
         'mp3' => 'mp3',
         'wav' => 'wav',
         'ogg' => 'ogg',
         'flac' => 'flac',
         'm4a' => 'm4a',
-        'aac' => 'aac', // Advanced Audio Coding
-        'opus' => 'opus', // Opus audio format
-        'alac' => 'm4a', // Apple Lossless Audio Codec (usualmente usa la extensión m4a)
-        'speex' => 'spx', // Speex audio format
-        'wma' => 'wma' // Windows Media Audio
+        'aac' => 'aac',
+        'opus' => 'opus',
+        'alac' => 'm4a',
+        'speex' => 'spx',
+        'wma' => 'wma'
     ];
 
     if (!isset($audioExtensions[$toFormat])) {
@@ -244,10 +279,7 @@ function convertAudio($sourcePath, $toFormat, $destinationPath) {
 
     $outputExt = $audioExtensions[$toFormat];
     $destinationPath = preg_replace('/\.[^.]+$/', '.' . $outputExt, $destinationPath);
-
-    // Comando para convertir el audio
     $command = "ffmpeg -i " . escapeshellarg($sourcePath) . " " . escapeshellarg($destinationPath);
-
     exec($command, $output, $returnVar);
 
     if ($returnVar !== 0) {
@@ -271,10 +303,17 @@ function convertAudio($sourcePath, $toFormat, $destinationPath) {
     }
 }
 
+/**
+ * Convierte vídeos a diferentes formatos.
+ * 
+ * @param string $sourcePath Ruta del archivo fuente.
+ * @param string $toFormat Formato de destino para la conversión.
+ * @param string $destinationPath Ruta del archivo de destino.
+ * @return array Resultado de la conversión.
+ */
 function convertVideo($sourcePath, $toFormat, $destinationPath) {
     global $response;
 
-    // Ampliar el mapeo para incluir más formatos de video
     $videoExtensions = [
         'mp4' => 'mp4',
         'mkv' => 'mkv',
@@ -299,10 +338,7 @@ function convertVideo($sourcePath, $toFormat, $destinationPath) {
 
     $outputExt = $videoExtensions[$toFormat];
     $destinationPath = preg_replace('/\.[^.]+$/', '.' . $outputExt, $destinationPath);
-
-    // Comando para convertir el video
     $command = "ffmpeg -i " . escapeshellarg($sourcePath) . " " . escapeshellarg($destinationPath);
-
     exec($command, $output, $returnVar);
 
     if ($returnVar !== 0) {
