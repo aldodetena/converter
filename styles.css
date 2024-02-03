@@ -165,14 +165,3 @@ button {
 button:hover {
     background-color: #0056b3;
 }
-
-.progress-bar {
-    width: 100%;
-    background-color: #ddd;
-}
-
-.progress {
-    height: 10px;
-    width: 0; /* Actualizar este valor para mostrar el progreso */
-    background-color: #4caf50;
-}
