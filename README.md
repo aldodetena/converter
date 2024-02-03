@@ -27,7 +27,7 @@ Para construir la imagen Docker de la aplicación, navega al directorio del proy
 docker build -t nombre-de-tu-imagen .
 ```
 
-Donde nombre-de-tu-imagen es el nombre que deseas asignar a tu imagen Docker.
+Donde **`nombre-de-tu-imagen`** es el nombre que deseas asignar a tu imagen Docker.
 
 ### Crear y Ejecutar el Contenedor
 Una vez construida la imagen, puedes crear y ejecutar un contenedor usando:
@@ -35,13 +35,14 @@ Una vez construida la imagen, puedes crear y ejecutar un contenedor usando:
 ```bash
 docker run -d -p 80:80 --name nombre-del-contenedor nombre-de-tu-imagen
 ```
-Esto iniciará el contenedor en modo "detached" y mapeará el puerto 80 del contenedor al puerto 80 de tu host, permitiéndote acceder a la aplicación a través de http://localhost.
+Esto iniciará el contenedor en modo "detached" y mapeará el puerto 80 del contenedor al puerto 80 de tu host, permitiéndote acceder a la aplicación a través de **`http://localhost`.**
 
 ### Generar Documentación con PHPDocumentor
 Si has incluido PHPDocumentor en tu imagen Docker, puedes generar la documentación de tu código PHP ejecutando:
 
 ```bash
 docker exec nombre-del-contenedor /usr/local/bin/phpDocumentor -d /var/www/html/ -t /var/www/html/docs
-Esto generará la documentación en el directorio /var/www/html/docs dentro del contenedor.
 ```
+
+Esto generará la documentación en el directorio **`/var/www/html/docs`** dentro del contenedor.
 
