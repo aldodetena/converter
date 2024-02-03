@@ -19,7 +19,8 @@
 }
 
 .principal button {
-    font-size: 18px;
+    font-size: 16px;
+    width: 200px;
     padding: 10px 20px;
     margin: 10px;
     border: none;
@@ -164,4 +165,45 @@ button {
 
 button:hover {
     background-color: #0056b3;
+}
+
+/* Media Query para dispositivos móviles */
+@media (max-width: 768px) {
+    .principal h1 {
+        font-size: 20px;
+        margin-top: 30px;
+    }
+
+    .principal button, .change-file-btn, button {
+        font-size: 16px;
+        padding: 8px 16px;
+    }
+
+    .container {
+        width: 90%;
+        max-width: none; /* Elimina el límite máximo de ancho para permitir que el contenedor se expanda */
+        padding: 10px;
+    }
+
+    .file-info {
+        flex-direction: column; /* Cambia la disposición de los elementos a vertical */
+        align-items: flex-start; /* Alinea los elementos al inicio */
+    }
+
+    .file-info-content, .file-buttons {
+        width: 100%; /* Hace que el contenido y los botones ocupen todo el ancho disponible */
+    }
+
+    .change-file-btn {
+        margin: 5px 0; /* Ajusta los márgenes para un mejor espaciado en disposición vertical */
+    }
+
+    #fileData {
+        width: 88% !important; /* Asegura que el input ocupe todo el ancho disponible */
+    }
+
+    .back-btn, select {
+        font-size: 18px; /* Aumenta el tamaño de fuente para mejor legibilidad */
+        padding: 12px 18px; /* Aumenta el padding para una mejor área de toque */
+    }
 }
