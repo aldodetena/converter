@@ -48,4 +48,4 @@ CMD cron && apache2-foreground
 # Eliminar los archivos resudiales
 RUN rm /var/www/html/php.ini
 RUN rm /var/www/html/Dockerfile
-RUN rm /var/www/html/phpDocumentor
+RUN rm /var/www/html/phpDocumentor.phar
