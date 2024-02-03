@@ -28,7 +28,7 @@ RUN mkdir /var/www/html/uploads && chmod 777 /var/www/html/uploads
 COPY . /var/www/html
 COPY php.ini /usr/local/etc/php/conf.d/custom-php.ini
 COPY policy.xml /etc/ImageMagick-6/policy.xml
-COPY phpDocumentor.phar /usr/local/bin/phpDocumentor.phar
+COPY phpDocumentor.phar /usr/local/bin/phpDocumentor
 
 # Dar permiso de ejecución al archivo PHAR de PHPDocumentor
 RUN chmod +x /usr/local/bin/phpDocumentor
