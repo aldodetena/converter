@@ -116,7 +116,10 @@ function updateUIForDownloadLink(fileData, index) {
     const fileInfosContainer = document.getElementById('fileInfosContainer');
     const btnContainer = fileInfosContainer.querySelectorAll('.file-buttons')[index];
     if (fileData.success) {
-        btnContainer.innerHTML = `<button class="download-btn" onclick="downloadFile('${fileData.filePath}', event)">Descargar</button>`;
+        btnContainer.innerHTML = `
+            <button class="change-file-btn" onclick="removeFileFromUI(this)">Eliminar</button>
+            <button class="change-file-btn" onclick="downloadFile('${fileData.filePath}', event)">Descargar</button>`;
+            
     } else {
         btnContainer.innerHTML = `<p>Error: ${fileData.message}</p>`;
     }
@@ -130,6 +133,27 @@ function updateUIForUploadError(index) {
     const fileInfosContainer = document.getElementById('fileInfosContainer');
     const btnContainer = fileInfosContainer.querySelectorAll('.file-buttons')[index];
     btnContainer.innerHTML = '<p>Error al subir el archivo.</p>';
+}
+
+/**
+ * Elimina el contenedor de la UI correspondiente al archivo y actualiza el input de archivo.
+ * @param {HTMLElement} button El botón que inició la acción de eliminación.
+ */
+function removeFileFromUI(button) {
+    // Encuentra el nombre del archivo asociado con el botón de eliminación
+    const fileName = button.closest('.file-info').querySelector('.file-name').textContent;
+    
+    // Elimina el archivo de la lista selectedFiles basándose en el nombre del archivo
+    selectedFiles = selectedFiles.filter(file => file.name !== fileName);
+
+    // Actualiza el input de archivo para reflejar los archivos seleccionados restantes
+    updateFileInput();
+
+    // Elimina el contenedor de la UI correspondiente al archivo
+    const fileContainer = button.closest('.file-info');
+    if (fileContainer) {
+        fileContainer.remove();
+    }
 }
 
 /**
