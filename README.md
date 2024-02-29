@@ -8,8 +8,7 @@ Nombre de la Aplicación es una herramienta de conversión de formatos de archiv
 
 ### Conversión de Imágenes
 Soporte para la conversión entre los siguientes formatos:
-- **Formatos de Entrada**: JPEG, PNG, BMP, GIF, TIFF, WEBP, SVG, PDF, EPS, ICO, CUR
-- **Formatos de Salida**: JPEG, PNG, BMP, GIF, TIFF, WEBP, SVG, PDF, EPS, ICO, CUR
+- **Formatos de Entrada/Salida**: JPEG, PNG, BMP, GIF, TIFF, WEBP, SVG, PDF, EPS, ICO, CUR
 
 ### Conversión de Documentos
 Transforma documentos entre los siguientes formatos:
