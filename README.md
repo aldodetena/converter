@@ -6,10 +6,23 @@ Nombre de la Aplicación es una herramienta de conversión de formatos de archiv
 
 ## Características
 
-- **Conversión de Imágenes**: Soporte para formatos como JPEG, PNG, BMP, GIF, y más.
-- **Conversión de Documentos**: Transforma documentos en formatos como DOCX, PDF, ODT, y TXT.
-- **Conversión de Audio**: Convierte entre formatos de audio populares como MP3, WAV, OGG, y FLAC.
-- **Conversión de Vídeo**: Soporta la conversión entre MP4, AVI, MKV, y otros formatos de vídeo.
+### Conversión de Imágenes
+Soporte para la conversión entre los siguientes formatos:
+- **Formatos de Entrada**: JPEG, PNG, BMP, GIF, TIFF, WEBP, SVG, PDF, EPS, ICO, CUR
+- **Formatos de Salida**: JPEG, PNG, BMP, GIF, TIFF, WEBP, SVG, PDF, EPS, ICO, CUR
+
+### Conversión de Documentos
+Transforma documentos entre los siguientes formatos:
+- **Formatos de Entrada**: DOCX, ODT, Markdown (TXT), CSV, TSV, IPYNB, JSON, RTF, HTML
+- **Formatos de Salida**: PDF, DOCX, HTML, Plain Text (TXT), Markdown, PPTX, RTF, IPYNB, JSON
+
+### Conversión de Audio
+Convierte entre formatos de audio populares:
+- **Formatos de Entrada/Salida**: MP3, WAV, OGG, FLAC, M4A, AAC, OPUS, ALAC, SPEEX (SPX), WMA
+
+### Conversión de Vídeo
+Soporta la conversión entre los siguientes formatos de vídeo:
+- **Formatos de Entrada/Salida**: MP4, MKV, AVI, WEBM, MOV, FLV, WMV, M4V, 3GP, MPG, MPEG, VOB
 
 ## Cómo Empezar
 
