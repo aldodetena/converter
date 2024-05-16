@@ -49,3 +49,4 @@ CMD cron && apache2-foreground
 RUN rm /var/www/html/php.ini
 RUN rm /var/www/html/Dockerfile
 RUN rm /var/www/html/phpDocumentor.phar
+RUN rm /var/www/html/policy.xml
